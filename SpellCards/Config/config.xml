@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" SelectedGameSystemID="0b63bf46-4110-4e30-b66b-514fc576abec">
+  <GameSystems>
+    <GameSystem Name="D&amp;D 5e" ID="0b63bf46-4110-4e30-b66b-514fc576abec" Field1Title="Casting Time" Field2Title="Range" Field3Title="Components" Field4Title="Duration" ShowRow1="true" ShowRow2="true" ShowRow3="false" />
+  </GameSystems>
+</Config>
