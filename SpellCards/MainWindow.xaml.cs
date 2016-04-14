@@ -205,29 +205,31 @@ namespace SpellCards
                         SaveSystem();
                         break;
                     case "ImportCSV":
-                        Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-                        dlg.DefaultExt = ".csv";
-                        //dlg.Filter = "JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|JPG Files (*.jpg)|*.jpg|GIF Files (*.gif)|*.gif"; 
-
-                        // Display OpenFileDialog by calling ShowDialog method 
-                        Nullable<bool> result = dlg.ShowDialog();
-
-                        // Get the selected file name and display in a TextBox 
-                        if (result == true)
                         {
-                            // Open document 
-                            string filename = dlg.FileName;
+                            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                            dlg.DefaultExt = ".csv";
+                            //dlg.Filter = "JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)|*.png|JPG Files (*.jpg)|*.jpg|GIF Files (*.gif)|*.gif"; 
 
-                            TextFieldParser parser = new TextFieldParser(filename);
-                            parser.TextFieldType = FieldType.Delimited;
-                            parser.SetDelimiters(";");
-                            while (!parser.EndOfData)
+                            // Display OpenFileDialog by calling ShowDialog method 
+                            Nullable<bool> result = dlg.ShowDialog();
+
+                            // Get the selected file name and display in a TextBox 
+                            if (result == true)
                             {
-                                //Process row
-                                string[] fields = parser.ReadFields();
-                                CurrentClass.Spells.Add(Business.Spell.NewSpell(fields, CurrentSystem, CurrentClass.Name));
+                                // Open document 
+                                string filename = dlg.FileName;
+
+                                TextFieldParser parser = new TextFieldParser(filename);
+                                parser.TextFieldType = FieldType.Delimited;
+                                parser.SetDelimiters(";");
+                                while (!parser.EndOfData)
+                                {
+                                    //Process row
+                                    string[] fields = parser.ReadFields();
+                                    CurrentClass.Spells.Add(Business.Spell.NewSpell(fields, CurrentSystem, CurrentClass.Name));
+                                }
+                                parser.Close();
                             }
-                            parser.Close();
                         }
                         break;
                     case "Print":
@@ -435,6 +437,60 @@ namespace SpellCards
                                 OnPropertyChanged("Config");
                             }
 
+                        }
+                        break;
+                    case "ImportXML":
+                        {
+                            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                            dlg.DefaultExt = ".xml";
+                            dlg.Filter = "XML Files (*.xml)|*.xml";
+                            bool? result = dlg.ShowDialog();
+                            if (result == true)
+                            {
+                                using (TextReader reader = new StreamReader(dlg.FileName))
+                                {
+                                    XmlSerializer serializer = new XmlSerializer(typeof(Business.SystemExport));
+                                    Business.SystemExport se = (Business.SystemExport)serializer.Deserialize(reader);
+                                    reader.Close();
+
+                                    string name = Microsoft.VisualBasic.Interaction.InputBox("Name the new system:", "System Import", "New System");
+                                    se.System.Name = name;
+                                    se.System.ID = new Guid();
+
+                                    Config.GameSystems.Add(se.System);
+                                    Config.GameSystems.OrderBy(p => p.Name);
+                                    Config.SelectedGameSystemID = se.System.ID;
+                                    this.CurrentSystem = se.System;
+
+                                    Classes = new ObservableCollection<Business.Class>(se.Classes);
+                                    CurrentClass = null;
+                                    CurrentSpell = null;
+                                    OnPropertyChanged("Config");
+                                    OnPropertyChanged("Classes");
+                                    SaveSystem();
+                                }
+                            }
+                        }
+                        break;
+                    case "ExportXML":
+                        {
+                            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+                            dlg.DefaultExt = ".xml";
+                            dlg.Filter = "XML Files (*.xml)|*.xml";
+                            bool? result = dlg.ShowDialog();
+                            if (result == true)
+                            {
+                                XmlSerializer writer = new XmlSerializer(typeof(Business.SystemExport));
+                                using (FileStream file = File.Create(dlg.FileName))
+                                {
+                                    Business.SystemExport se = new Business.SystemExport();
+                                    se.Classes = Classes.ToList();
+                                    se.System = CurrentSystem;
+
+                                    writer.Serialize(file, se);
+                                    file.Close();
+                                }
+                            }
                         }
                         break;
                 }

@@ -107,6 +107,13 @@ namespace SpellCards.Business
         }
     }
 
+    [Serializable]
+    public class SystemExport
+    {
+        public GameSystem System { get; set; }
+        public List<Class> Classes { get; set; }
+    }
+
     public class Character : INotifyPropertyChanged
     {
         private string _name;

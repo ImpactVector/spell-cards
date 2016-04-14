@@ -74,6 +74,8 @@
                 <MenuItem Click="Item_Click" Header="Print All Characters..." Tag="PrintAllCharacters" IsEnabled="{Binding Path=IsCharacterSelected}" />
                 <Separator />
                 <MenuItem Click="Item_Click" Header="_Import CSV to Class..." Tag="ImportCSV" IsEnabled="{Binding Path=IsClassSelected}" />
+                <MenuItem Click="Item_Click" Header="Import New System XML..." Tag="ImportXML" />
+                <MenuItem Click="Item_Click" Header="Export System XML..." Tag="ExportXML" IsEnabled="{Binding Path=IsSystemSelected}" />
                 <Separator />
                 <MenuItem Click="Item_Click" Header="_Exit" Tag="Exit" />
             </MenuItem>
