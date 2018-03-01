@@ -186,6 +186,8 @@ namespace SpellCards.Business
             {
                 if (_level == 0)
                     return _school + " Cantrip";
+                else if (_level == -1)
+                    return _school;
                 else
                     return GetLevelText(_level) + " Level " + _school;
             } 
